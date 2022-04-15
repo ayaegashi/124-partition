@@ -8,6 +8,8 @@
 
 using namespace std;
 
+int* kk(int* seq);
+
 int main(int argc, char *argv[]) {
 
     //checks that there are command line args
@@ -30,6 +32,9 @@ int main(int argc, char *argv[]) {
     int alg = (int) strtol(argv[2], NULL, 10);
     char *inputfile = argv[3];
 
+    if (inputfile) {
+        printf("compiles %i %i\n", flag, alg);
+    }
 
 
     return 0;
@@ -37,7 +42,10 @@ int main(int argc, char *argv[]) {
 
 // Karmarkar-Karp Algorithm
 int* kk(int* seq){
-    int* signs;
-
-    return signs
+    // will change!
+    if (seq){
+        return 0;
+    } else {
+        return 0;
+    }
 };
