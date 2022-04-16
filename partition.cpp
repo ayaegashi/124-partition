@@ -20,6 +20,8 @@ const int MAX_ITER = 25000;
 // Algorithms
 int kk(vector<uint64_t> seq);
 int repeatedRandom(vector<uint64_t> A, int n, bool isSequence);
+int hillClimbing(vector<uint64_t> A, int n, bool isSequence);
+int T(int i);
 
 // For Prepartitioning
 int calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S);
@@ -75,14 +77,19 @@ int main(int argc, char *argv[]) {
         sequence = generateRandomInstance(100);
     }
 
-    for (size_t i = 0; i < sequence.size(); i ++) {
+    int n = sequence.size();
+
+    for (int i = 0; i < n; i ++) {
         printf("%llu ", sequence[i]);
     }
 
     if (alg == 0){
         int difference = kk(sequence);
-        printf("\n%i\n", difference);
+        printf("\nkk residue: %i\n", difference);
     }
+
+    int repeatedRandomBest = repeatedRandom(sequence, n, false);
+    printf("repeated random residue: %i\n", repeatedRandomBest);
 
     return 0;
 };
@@ -140,6 +147,59 @@ int repeatedRandom(vector<uint64_t> A, int n, bool isSequence) {
         }
         return bestResidue;
     }
+}
+
+// Returns best residue from hill climbing algorithm
+int hillClimbing(vector<uint64_t> A, int n, bool isSequence) {
+    if (isSequence) {
+        //TODO: For Ayana: Sequence Code Here
+        return -1;
+    } else {
+        vector<int> startSoln = generateRandomPrepartitioningSoln(n);
+        int bestResidue = calcResiduePrepartitioning(A, startSoln);
+        for (int i = 0; i < MAX_ITER; i++) {
+            vector<int> neighbor = generateRandomPrepartitioningMove(startSoln, n);
+            int residue = calcResiduePrepartitioning(A, neighbor);
+            if (residue < bestResidue) {
+                bestResidue = residue;
+                startSoln = neighbor;
+            }
+        }
+        return bestResidue;
+    }
+}
+
+int simulatedAnnealing(vector<uint64_t> A, int n, bool isSequence) {
+    if (isSequence) {
+        //TODO: For Ayana: Sequence Code Here
+        return -1;
+    } else {
+        vector<int> currSoln = generateRandomPrepartitioningSoln(n);
+        vector<int> bestSoln = currSoln;
+        int currResidue = calcResiduePrepartitioning(A, currSoln);
+        int bestResidue = currResidue;
+        for (int i = 0; i < MAX_ITER; i++) {
+            vector<int> neighbor = generateRandomPrepartitioningMove(currSoln, n);
+            int residue = calcResiduePrepartitioning(A, neighbor);
+            // if a better residue neighbor OR with some probability switch to it anyway
+            if (residue < currResidue || (double) rand() / RAND_MAX < exp((uint64_t) (currResidue - residue) / T(i))) {
+                currSoln = neighbor;
+                currResidue = residue;
+            } 
+
+            if (currResidue < bestResidue) {
+                bestResidue = currResidue;
+                bestSoln = currSoln;
+            }
+
+        }
+        return bestResidue;
+    }
+}
+
+int T(int i) {
+    int iter = floor(i/300);
+    return pow(10, 10) * pow(0.8, iter);
 }
 
 // Generates a random preparitioning solution
