@@ -17,9 +17,21 @@ mt19937 gen(rd());
 
 const int MAX_ITER = 25000;
 
+// Algorithms
 int kk(vector<uint64_t> seq);
+int repeatedRandom(vector<uint64_t> A, int n, bool isSequence);
+
+// For Prepartitioning
+int calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S);
+vector<int> generateRandomPrepartitioningSoln(int n);
+vector<int> generateRandomPrepartitioningMove(vector<int> prev, int n);
+
+// Generating Instances
 vector<uint64_t> generateRandomInstance(int n);
 int generateRandomInt(int low, int high);
+
+// THINGS JENNS NOT SURE ABOUT: should the residue be an unit64_t as well??? instead of just an int???
+// I'm also not sure if I implemented 64 bit ints correctly lol
 
 int main(int argc, char *argv[]) {
 
@@ -136,6 +148,7 @@ vector<int> generateRandomPrepartitioningSoln(int n) {
     for (int i = 0; i < n; i++) {
         soln.push_back(generateRandomInt(1, n));
     }
+    return soln;
 }
 
 // Given problem instance A and prepartioning solution S, calculates the residue with KK
@@ -162,8 +175,8 @@ vector<int> generateRandomPrepartitioningMove(vector<int> prev, int n) {
     int i = generateRandomInt(1, n);
     int j = generateRandomInt(1, n);
     while (prev[i] == j) {
-        int i = generateRandomInt(1, n);
-        int j = generateRandomInt(1, n);
+        i = generateRandomInt(1, n);
+        j = generateRandomInt(1, n);
     }
     prev[i] = j;
     return prev;
