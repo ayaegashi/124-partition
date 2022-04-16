@@ -15,12 +15,13 @@ using namespace std;
 random_device rd;
 mt19937 gen(rd());
 
-const int MAX_ITER = 25000;
+const int MAX_ITER = 500;
 
 // Algorithms
 int kk(vector<uint64_t> seq);
 int repeatedRandom(vector<uint64_t> A, int n, bool isSequence);
 int hillClimbing(vector<uint64_t> A, int n, bool isSequence);
+int simulatedAnnealing(vector<uint64_t> A, int n, bool isSequence);
 int T(int i);
 
 // For Prepartitioning
@@ -72,24 +73,48 @@ int main(int argc, char *argv[]) {
 
         file.close();
     }
-    // Generate random instance from function
+    // Generate x random instances from function
     else if (flag == 1) {
-        sequence = generateRandomInstance(100);
+        for (int i = 0; i < 1; i++) {
+            sequence = generateRandomInstance(100);
+            int n = sequence.size();
+
+            int kkResidue = kk(sequence);
+            printf("kk residue: %i\n", kkResidue);
+
+            int repeatedRandomResidue = repeatedRandom(sequence, n, false);
+            printf("repeated random residue: %i\n", repeatedRandomResidue);
+
+            int hillClimbingResidue = hillClimbing(sequence, n, false);
+            printf("hill climbing residue: %i\n", hillClimbingResidue);
+
+            int simulatedAnealingResidue = simulatedAnnealing(sequence, n, false);
+            printf("simulated annealing residue: %i\n", simulatedAnealingResidue);
+        }
     }
 
     int n = sequence.size();
 
-    for (int i = 0; i < n; i ++) {
-        printf("%llu ", sequence[i]);
-    }
+    // for (int i = 0; i < n; i ++) {
+    //     printf("%llu ", sequence[i]);
+    // }
 
-    if (alg == 0){
+    if (flag == 0 && alg == 0){
         int difference = kk(sequence);
-        printf("\nkk residue: %i\n", difference);
+        printf("\n%i\n", difference);
     }
-
-    int repeatedRandomBest = repeatedRandom(sequence, n, false);
-    printf("repeated random residue: %i\n", repeatedRandomBest);
+    else if (flag == 0 && alg == 11) {
+        int residue = repeatedRandom(sequence, n, false);
+        printf("\n %i\n", residue);
+    }
+    else if (flag == 0 && alg == 12) {
+        int residue = hillClimbing(sequence, n, false);
+        printf("\n %i\n", residue);
+    }
+    else if (flag == 0 && alg == 13) {
+        int residue = simulatedAnnealing(sequence, n, false);
+        printf("\n %i\n", residue);
+    }
 
     return 0;
 };
