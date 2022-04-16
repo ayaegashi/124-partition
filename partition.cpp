@@ -15,7 +15,7 @@ std::mt19937 gen(rd());
 
 using namespace std;
 
-int kk(vector<int> seq);
+int kk(vector<uint64_t> seq);
 vector<uint64_t> generateRandomInstance();
 uint64_t generateRandomInt(int low, int high);
 
@@ -62,10 +62,10 @@ int main(int argc, char *argv[]) {
     }
 
     for (size_t i = 0; i < sequence.size(); i ++) {
-        printf("%i ", sequence[i]);
+        printf("%llu ", sequence[i]);
     }
 
-    if (flag == 0 && alg == 0){
+    if (alg == 0){
         int difference = kk(sequence);
         printf("\n%i\n", difference);
     }
