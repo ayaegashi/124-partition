@@ -15,10 +15,10 @@ using namespace std;
 random_device rd;
 mt19937 gen(rd());
 
-const int MAX_ITER = 1000;
+const int MAX_ITER = 25000;
 
 // Algorithms
-int kk(vector<uint64_t> seq);
+uint64_t kk(vector<uint64_t> seq);
 int repeatedRandom(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
 int hillClimbing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
 int simulatedAnnealing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
@@ -79,8 +79,12 @@ int main(int argc, char *argv[]) {
             sequence = generateRandomInstance(100);
             int n = sequence.size();
 
-            int kkResidue = kk(sequence);
-            printf("kk residue: %i\n", kkResidue);
+            for (int i = 0; i < n; i++) {
+                printf("%llu\n", sequence[i]);
+            }
+
+            uint64_t kkResidue = kk(sequence);
+            printf("kk residue: %llu\n", kkResidue);
 
             vector<int> startS = generateRandomPrepartitioningSoln(n);
 
@@ -126,20 +130,20 @@ int main(int argc, char *argv[]) {
 
 // IGNORE FOR NOW DOESNT WORK!
 // Karmarkar-Karp Algorithm --> returns just difference
-int kk(vector<uint64_t> seq){
+uint64_t kk(vector<uint64_t> seq){
     make_heap(seq.begin(), seq.end());
 
-    int largest = 0;
-    int nextLargest = 0;
+    uint64_t largest = (uint64_t) 0;
+    uint64_t nextLargest = (uint64_t) 0;
     do {
-        int largest = seq.front();
+        uint64_t largest = seq.front();
         pop_heap (seq.begin(),seq.end());  // puts the largest element at the end of the vector
         seq.pop_back();  // removes the last element of the vector (what we just popped from the heap)
-        int nextLargest = seq.front();
+        uint64_t nextLargest = seq.front();
         pop_heap (seq.begin(),seq.end());  // puts the largest element at the end of the vector
         seq.pop_back();  // removes the last element of the vector (what we just popped from the heap)
 
-        int difference = largest - nextLargest;
+        uint64_t difference = largest - nextLargest;
         if (difference > 0){
             seq.push_back(difference);  // add difference to end of the vector
             push_heap (seq.begin(), seq.end());
@@ -251,8 +255,8 @@ int calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S) {
 
     // Generate A_i from prepartioning S
     for (int i = 0; i < n; i++) {
-        int new_idx = S[i];
-        A_prime[new_idx] += A[i];
+        int new_idx = S.at(i);
+        A_prime[new_idx] += A.at(i);
     }
 
     // Calculate Residue with KK
@@ -261,11 +265,11 @@ int calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S) {
 
 // Takes previous solution and randomly generates next solution to explore out of neighbor state space
 vector<int> generateRandomPrepartitioningMove(vector<int> prev, int n) {
-    int i = generateRandomInt(1, n);
-    int j = generateRandomInt(1, n);
-    while (prev[i] == j) {
-        i = generateRandomInt(1, n);
-        j = generateRandomInt(1, n);
+    int i = generateRandomInt(0, n-1);
+    int j = generateRandomInt(0, n-1);
+    while (prev.at(i) == j) {
+        i = generateRandomInt(0, n-1);
+        j = generateRandomInt(0, n-1);
     }
     prev[i] = j;
     return prev;
