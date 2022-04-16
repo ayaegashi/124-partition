@@ -8,10 +8,16 @@
 #include <vector>
 #include <tuple>
 #include <algorithm>
+#include <random>
+ 
+std::random_device rd;
+std::mt19937 gen(rd());
 
 using namespace std;
 
 int kk(vector<int> seq);
+vector<uint64_t> generateRandomInstance();
+uint64_t generateRandomInt(int low, int high);
 
 int main(int argc, char *argv[]) {
 
@@ -35,19 +41,25 @@ int main(int argc, char *argv[]) {
     int alg = (int) strtol(argv[2], NULL, 10);
     char *inputfile = argv[3];
 
+    vector<uint64_t> sequence;
     // Construct vector from inputfile
-    vector<int> sequence;
-    ifstream file (inputfile, ios::in);
-    if (file.fail()) {
-        printf("File could not be opened.\n");
-        return 0;
-    }
-    int n;
-    while (file >> n){
-        sequence.push_back(n);
-    }
+    if (flag == 0) {
+        ifstream file (inputfile, ios::in);
+        if (file.fail()) {
+            printf("File could not be opened.\n");
+            return 0;
+        }
+        uint64_t n;
+        while (file >> n){
+            sequence.push_back(n);
+        }
 
-    file.close();
+        file.close();
+    }
+    // Generate random instance from function
+    else if (flag == 1) {
+        sequence = generateRandomInstance();
+    }
 
     for (size_t i = 0; i < sequence.size(); i ++) {
         printf("%i ", sequence[i]);
@@ -63,7 +75,7 @@ int main(int argc, char *argv[]) {
 
 // IGNORE FOR NOW DOESNT WORK!
 // Karmarkar-Karp Algorithm --> returns just difference
-int kk(vector<int> seq){
+int kk(vector<uint64_t> seq){
     make_heap(seq.begin(), seq.end());
 
     int largest = 0;
@@ -94,3 +106,16 @@ int kk(vector<int> seq){
     largest += 1;
     nextLargest += 1;
 };
+
+vector<uint64_t> generateRandomInstance() {
+    vector<uint64_t> instance;
+    for (int i = 0; i < 100; i++) {
+        instance.push_back(generateRandomInt(1, pow(10, 12)));
+    }
+    return instance;
+}
+
+uint64_t generateRandomInt(int low, int high) {
+    std::uniform_int_distribution<> dist(low, high);
+    return (uint64_t) dist(gen);
+}
