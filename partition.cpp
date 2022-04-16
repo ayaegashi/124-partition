@@ -15,7 +15,7 @@ using namespace std;
 random_device rd;
 mt19937 gen(rd());
 
-const int MAX_ITER = 500;
+const int MAX_ITER = 100;
 
 // Algorithms
 int kk(vector<uint64_t> seq);
