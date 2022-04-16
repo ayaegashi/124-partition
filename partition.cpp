@@ -9,11 +9,13 @@
 #include <tuple>
 #include <algorithm>
 #include <random>
- 
-std::random_device rd;
-std::mt19937 gen(rd());
 
 using namespace std;
+
+random_device rd;
+mt19937 gen(rd());
+
+const int MAX_ITER = 25000;
 
 int kk(vector<uint64_t> seq);
 vector<uint64_t> generateRandomInstance(int n);
@@ -107,16 +109,56 @@ int kk(vector<uint64_t> seq){
     nextLargest += 1;
 };
 
+// Returns best residue from repeated random algorithm
+int repeatedRandom(vector<uint64_t> A, int n, bool isSequence) {
+    if (isSequence) {
+        //TODO: For Ayana: sequence code here
+        return -1;
+    // For Prepartitioning representation
+    } else {
+        vector<int> bestSoln = generateRandomPrepartitioningSoln(n);
+        int bestResidue = calcResiduePrepartitioning(A, bestSoln);
+        for (int i = 0; i < MAX_ITER; i++) {
+            vector<int> soln = generateRandomPrepartitioningSoln(n);
+            int residue = calcResiduePrepartitioning(A, soln);
+            if (residue < bestResidue) {
+                bestSoln = soln;
+                bestResidue = residue;
+            }
+        }
+        return bestResidue;
+    }
+}
+
 // Generates a random preparitioning solution
-vector<int> generateRandomPrepartioningSoln(int n) {
+vector<int> generateRandomPrepartitioningSoln(int n) {
     vector<int> soln;
     for (int i = 0; i < n; i++) {
         soln.push_back(generateRandomInt(1, n));
     }
 }
 
+// Given problem instance A and prepartioning solution S, calculates the residue with KK
+int calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S) {
+    int n = S.size();
+    // Initialize A_prime
+    vector<uint64_t> A_prime;
+    for (int i = 0; i < n; i++) {
+        A_prime.push_back(0);
+    }
+
+    // Generate A_i from prepartioning S
+    for (int i = 0; i < n; i++) {
+        int new_idx = S[i];
+        A_prime[new_idx] += A[i];
+    }
+
+    // Calculate Residue with KK
+    return kk(A_prime);
+}
+
 // Takes previous solution and randomly generates next solution to explore out of neighbor state space
-vector<int> generateRandomPreparitioningMove(vector<int> prev, int n) {
+vector<int> generateRandomPrepartitioningMove(vector<int> prev, int n) {
     int i = generateRandomInt(1, n);
     int j = generateRandomInt(1, n);
     while (prev[i] == j) {
