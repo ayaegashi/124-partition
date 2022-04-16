@@ -16,8 +16,8 @@ std::mt19937 gen(rd());
 using namespace std;
 
 int kk(vector<uint64_t> seq);
-vector<uint64_t> generateRandomInstance();
-uint64_t generateRandomInt(int low, int high);
+vector<uint64_t> generateRandomInstance(int n);
+int generateRandomInt(int low, int high);
 
 int main(int argc, char *argv[]) {
 
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
     }
     // Generate random instance from function
     else if (flag == 1) {
-        sequence = generateRandomInstance();
+        sequence = generateRandomInstance(100);
     }
 
     for (size_t i = 0; i < sequence.size(); i ++) {
@@ -107,15 +107,37 @@ int kk(vector<uint64_t> seq){
     nextLargest += 1;
 };
 
-vector<uint64_t> generateRandomInstance() {
+// Generates a random preparitioning solution
+vector<int> generateRandomPrepartioningSoln(int n) {
+    vector<int> soln;
+    for (int i = 0; i < n; i++) {
+        soln.push_back(generateRandomInt(1, n));
+    }
+}
+
+// Takes previous solution and randomly generates next solution to explore out of neighbor state space
+vector<int> generateRandomPreparitioningMove(vector<int> prev, int n) {
+    int i = generateRandomInt(1, n);
+    int j = generateRandomInt(1, n);
+    while (prev[i] == j) {
+        int i = generateRandomInt(1, n);
+        int j = generateRandomInt(1, n);
+    }
+    prev[i] = j;
+    return prev;
+}
+
+// Generates random instance A of partitioning problem
+vector<uint64_t> generateRandomInstance(int n) {
     vector<uint64_t> instance;
-    for (int i = 0; i < 100; i++) {
-        instance.push_back(generateRandomInt(1, pow(10, 12)));
+    for (int i = 0; i < n; i++) {
+        instance.push_back((uint64_t) generateRandomInt(1, pow(10, 12)));
     }
     return instance;
 }
 
-uint64_t generateRandomInt(int low, int high) {
+// Generates random 64 bit integer between low and high inclusive
+int generateRandomInt(int low, int high) {
     std::uniform_int_distribution<> dist(low, high);
-    return (uint64_t) dist(gen);
+    return dist(gen);
 }
