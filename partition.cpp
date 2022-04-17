@@ -19,22 +19,27 @@ const int MAX_ITER = 25000;
 
 // Algorithms
 uint64_t kk(vector<uint64_t> seq);
-int repeatedRandom(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
-int hillClimbing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
-int simulatedAnnealing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
+uint64_t repeatedRandom(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
+uint64_t hillClimbing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
+uint64_t simulatedAnnealing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
 int T(int i);
 
 // For Prepartitioning
-int calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S);
+uint64_t calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S);
 vector<int> generateRandomPrepartitioningSoln(int n);
 vector<int> generateRandomPrepartitioningMove(vector<int> prev, int n);
+
+// For Sequence Representation
+uint64_t calcResidueSequence(vector<uint64_t> A, vector<int> seq);
+vector<int> generateRandomSequenceSoln(int n);
+vector<int> generateRandomSequenceMove(vector<int> prevSeq);
 
 // Generating Instances
 vector<uint64_t> generateRandomInstance(int n);
 int generateRandomInt(int low, int high);
 
-// THINGS JENNS NOT SURE ABOUT: should the residue be an unit64_t as well??? instead of just an int???
-// I'm also not sure if I implemented 64 bit ints correctly lol
+
+// I'm also not sure if I implemented 64 bit ints correctly lol... HOPEFULLY!!! lmao
 
 int main(int argc, char *argv[]) {
 
@@ -59,6 +64,7 @@ int main(int argc, char *argv[]) {
     char *inputfile = argv[3];
 
     vector<uint64_t> sequence;
+
     // Construct vector from inputfile
     if (flag == 0) {
         ifstream file (inputfile, ios::in);
@@ -66,12 +72,54 @@ int main(int argc, char *argv[]) {
             printf("File could not be opened.\n");
             return 0;
         }
-        uint64_t n;
-        while (file >> n){
-            sequence.push_back(n);
+        uint64_t num;
+        while (file >> num){
+            sequence.push_back(num);
         }
 
         file.close();
+
+        int n = sequence.size();
+
+        // for (int i = 0; i < n; i ++) {
+        //     printf("%llu ", sequence[i]);
+        // }
+
+        if (alg == 0){
+            int difference = kk(sequence);
+            printf("\n%i\n", difference);
+        }
+        else if (alg == 1) {
+            vector<int> startS = generateRandomSequenceSoln(n);
+            int residue = repeatedRandom(sequence, startS, n, true);
+            printf("\n %i\n", residue);
+        }
+        else if (alg == 2) {
+            vector<int> startS = generateRandomSequenceSoln(n);
+            int residue = hillClimbing(sequence, startS, n, true);
+            printf("\n %i\n", residue);
+        }
+        else if (alg == 3) {
+            vector<int> startS = generateRandomSequenceSoln(n);
+            int residue = simulatedAnnealing(sequence, startS, n, true);
+            printf("\n %i\n", residue);
+        }
+        else if (alg == 11) {
+            vector<int> startS = generateRandomPrepartitioningSoln(n);
+            int residue = repeatedRandom(sequence, startS, n, false);
+            printf("\n %i\n", residue);
+        }
+        else if (alg == 12) {
+            vector<int> startS = generateRandomPrepartitioningSoln(n);
+            int residue = hillClimbing(sequence, startS, n, false);
+            printf("\n %i\n", residue);
+        }
+        else if (alg == 13) {
+            vector<int> startS = generateRandomPrepartitioningSoln(n);
+            int residue = simulatedAnnealing(sequence, startS, n, false);
+            printf("\n %i\n", residue);
+        }
+
     }
     // Generate x random instances from function
     else if (flag == 1) {
@@ -86,49 +134,34 @@ int main(int argc, char *argv[]) {
             uint64_t kkResidue = kk(sequence);
             printf("kk residue: %llu\n", kkResidue);
 
-            vector<int> startS = generateRandomPrepartitioningSoln(n);
+            vector<int> startSequenceSol = generateRandomSequenceSoln(n);
+            vector<int> startPrepartSol = generateRandomPrepartitioningSoln(n);
 
-            int repeatedRandomResidue = repeatedRandom(sequence, startS, n, false);
-            printf("repeated random residue: %i\n", repeatedRandomResidue);
+            // Sequencing 
+            uint64_t repeatedRandomSeqResidue = repeatedRandom(sequence, startSequenceSol, n, true);
+            printf("SEQUENCE repeated random residue: %llu\n", repeatedRandomSeqResidue);
 
-            int hillClimbingResidue = hillClimbing(sequence, startS, n, false);
-            printf("hill climbing residue: %i\n", hillClimbingResidue);
+            uint64_t hillClimbingSeqResidue = hillClimbing(sequence, startSequenceSol, n, true);
+            printf("SEQUENCE hill climbing residue: %llu\n", hillClimbingSeqResidue);
 
-            int simulatedAnealingResidue = simulatedAnnealing(sequence, startS, n, false);
-            printf("simulated annealing residue: %i\n", simulatedAnealingResidue);
+            uint64_t simulatedAnealingSeqResidue = simulatedAnnealing(sequence, startSequenceSol, n, true);
+            printf("SEQUENCE simulated annealing residue: %llu\n", simulatedAnealingSeqResidue);
+
+            // Prepartitioning
+            uint64_t repeatedRandomPrepartResidue = repeatedRandom(sequence, startPrepartSol, n, false);
+            printf("PREPARTITION repeated random residue: %llu\n", repeatedRandomPrepartResidue);
+
+            uint64_t hillClimbingPrepartResidue = hillClimbing(sequence, startPrepartSol, n, false);
+            printf("PREPARTITION hill climbing residue: %llu\n", hillClimbingPrepartResidue);
+
+            uint64_t simulatedAnealingPrepartResidue = simulatedAnnealing(sequence, startPrepartSol, n, false);
+            printf("PREPARTITION simulated annealing residue: %llu\n", simulatedAnealingPrepartResidue);
         }
-    }
-
-    int n = sequence.size();
-
-    // for (int i = 0; i < n; i ++) {
-    //     printf("%llu ", sequence[i]);
-    // }
-
-    if (flag == 0 && alg == 0){
-        int difference = kk(sequence);
-        printf("\n%i\n", difference);
-    }
-    else if (flag == 0 && alg == 11) {
-        vector<int> startS = generateRandomPrepartitioningSoln(n);
-        int residue = repeatedRandom(sequence, startS, n, false);
-        printf("\n %i\n", residue);
-    }
-    else if (flag == 0 && alg == 12) {
-        vector<int> startS = generateRandomPrepartitioningSoln(n);
-        int residue = hillClimbing(sequence, startS, n, false);
-        printf("\n %i\n", residue);
-    }
-    else if (flag == 0 && alg == 13) {
-        vector<int> startS = generateRandomPrepartitioningSoln(n);
-        int residue = simulatedAnnealing(sequence, startS, n, false);
-        printf("\n %i\n", residue);
     }
 
     return 0;
 };
 
-// IGNORE FOR NOW DOESNT WORK!
 // Karmarkar-Karp Algorithm --> returns just difference
 uint64_t kk(vector<uint64_t> seq){
     make_heap(seq.begin(), seq.end());
@@ -163,17 +196,27 @@ uint64_t kk(vector<uint64_t> seq){
 };
 
 // Returns best residue from repeated random algorithm
-int repeatedRandom(vector<uint64_t> A, vector<int> startS, int n, bool isSequence) {
+uint64_t repeatedRandom(vector<uint64_t> A, vector<int> startS, int n, bool isSequence) {
+    // Sequence of +1 and -1 representation
     if (isSequence) {
-        //TODO: For Ayana: sequence code here
-        return -1;
+        vector<int> bestSoln = startS;
+        uint64_t bestRes = calcResidueSequence(A, bestSoln);
+        for (int i = 0; i < MAX_ITER; i++) {
+            vector<int> newSoln = generateRandomSequenceSoln(n); // Completely random (non-neighbor) solution
+            uint64_t newResidue = calcResidueSequence(A, newSoln);
+            if (newResidue < bestRes) {
+                bestRes = newResidue;
+                bestSoln = newSoln;
+            }
+        }
+        return bestRes;
     // For Prepartitioning representation
     } else {
         vector<int> bestSoln = startS;
-        int bestResidue = calcResiduePrepartitioning(A, bestSoln);
+        uint64_t bestResidue = calcResiduePrepartitioning(A, bestSoln);
         for (int i = 0; i < MAX_ITER; i++) {
             vector<int> soln = generateRandomPrepartitioningSoln(n);
-            int residue = calcResiduePrepartitioning(A, soln);
+            uint64_t residue = calcResiduePrepartitioning(A, soln);
             if (residue < bestResidue) {
                 bestSoln = soln;
                 bestResidue = residue;
@@ -184,16 +227,25 @@ int repeatedRandom(vector<uint64_t> A, vector<int> startS, int n, bool isSequenc
 }
 
 // Returns best residue from hill climbing algorithm
-int hillClimbing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence) {
+uint64_t hillClimbing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence) {
     if (isSequence) {
-        //TODO: For Ayana: Sequence Code Here
-        return -1;
+        vector<int> bestSoln = startS;
+        uint64_t bestRes = calcResidueSequence(A, bestSoln);
+        for (int i = 0; i < MAX_ITER; i++) {
+            vector<int> neighbor = generateRandomSequenceMove(bestSoln);
+            uint64_t neighborRes = calcResidueSequence(A, neighbor);
+            if (neighborRes < bestRes) {
+                bestRes = neighborRes;
+                bestSoln = neighbor;
+            }
+        }
+        return bestRes;
     } else {
         vector<int> currSoln = startS;
-        int bestResidue = calcResiduePrepartitioning(A, currSoln);
+        uint64_t bestResidue = calcResiduePrepartitioning(A, currSoln);
         for (int i = 0; i < MAX_ITER; i++) {
             vector<int> neighbor = generateRandomPrepartitioningMove(currSoln, n);
-            int residue = calcResiduePrepartitioning(A, neighbor);
+            uint64_t residue = calcResiduePrepartitioning(A, neighbor);
             if (residue < bestResidue) {
                 bestResidue = residue;
                 currSoln = neighbor;
@@ -203,18 +255,35 @@ int hillClimbing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence)
     }
 }
 
-int simulatedAnnealing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence) {
+uint64_t simulatedAnnealing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence) {
     if (isSequence) {
-        //TODO: For Ayana: Sequence Code Here
-        return -1;
+        vector<int> currSoln = startS;
+        vector<int> bestSoln = startS;
+        uint64_t currResidue = calcResidueSequence(A, currSoln);
+        uint64_t bestResidue = currResidue;
+        for (int i = 0; i < MAX_ITER; i++) {
+            vector<int> neighbor = generateRandomSequenceMove(currSoln);
+            uint64_t residue = calcResidueSequence(A, neighbor);
+            // if a better residue neighbor OR with some probability switch to it anyway
+            if (residue < currResidue || (double) rand() / RAND_MAX < exp((uint64_t) (currResidue - residue) / T(i))) {
+                currSoln = neighbor;
+                currResidue = residue;
+            } 
+            // check if current is better than the best, then keep track of best
+            if (currResidue < bestResidue) {
+                bestResidue = currResidue;
+                bestSoln = currSoln;
+            }
+        }
+        return bestResidue;
     } else {
         vector<int> currSoln = startS;
         vector<int> bestSoln = startS;
-        int currResidue = calcResiduePrepartitioning(A, currSoln);
-        int bestResidue = currResidue;
+        uint64_t currResidue = calcResiduePrepartitioning(A, currSoln);
+        uint64_t bestResidue = currResidue;
         for (int i = 0; i < MAX_ITER; i++) {
             vector<int> neighbor = generateRandomPrepartitioningMove(currSoln, n);
-            int residue = calcResiduePrepartitioning(A, neighbor);
+            uint64_t residue = calcResiduePrepartitioning(A, neighbor);
             // if a better residue neighbor OR with some probability switch to it anyway
             if (residue < currResidue || (double) rand() / RAND_MAX < exp((uint64_t) (currResidue - residue) / T(i))) {
                 currSoln = neighbor;
@@ -245,7 +314,7 @@ vector<int> generateRandomPrepartitioningSoln(int n) {
 }
 
 // Given problem instance A and prepartioning solution S, calculates the residue with KK
-int calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S) {
+uint64_t calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S) {
     int n = S.size();
     // Initialize A_prime
     vector<uint64_t> A_prime;
@@ -284,8 +353,59 @@ vector<uint64_t> generateRandomInstance(int n) {
     return instance;
 }
 
+// Generates a random sequence solution
+vector<int> generateRandomSequenceSoln(int n) {
+    vector<int> soln;
+    for (int i = 0; i < n; i++) {
+        soln.push_back(generateRandomInt(0, 1) == 1 ? 1 : -1);
+    }
+    return soln;
+}
+
+// Generates a random sequence solution MOVE
+vector<int> generateRandomSequenceMove(vector<int> prevSeq) {
+    int n = prevSeq.size();
+    int i = generateRandomInt(0, n - 1);
+    int j = generateRandomInt(0, n - 1);
+    while (i == j) {
+        i = generateRandomInt(0, n - 1);
+        j = generateRandomInt(0, n - 1);
+    }
+
+    prevSeq[i] = -1 * prevSeq[i];
+
+    // With probability of 0.5, set s_j to -s_j
+    int randProb = generateRandomInt(0,1);
+    if (randProb == 0) {
+        prevSeq[j] = -1 * prevSeq[j];
+    }
+
+    return prevSeq;
+}
+
+// Given problem instance A and sequence solution S, calculates the residue
+uint64_t calcResidueSequence(vector<uint64_t> A, vector<int> seq) {
+    int n = seq.size();
+    uint64_t set1 = 0;
+    uint64_t set2 = 0;
+    for (int i = 0; i < n; i++) {
+        if (seq[i] == 1) {
+            set1 += A[i];
+        } else {
+            set2 += A[i];
+        }
+    }
+    
+    if (set1 > set2) {
+        return set1 - set2;
+    } else {
+        return set2 - set1;
+    }
+}
+
 // Generates random 64 bit integer between low and high inclusive
 int generateRandomInt(int low, int high) {
     std::uniform_int_distribution<> dist(low, high);
     return dist(gen);
 }
+
