@@ -12,6 +12,100 @@
 
 using namespace std;
 
+// Max Heap data structure
+struct MaxHeap {
+    vector<uint64_t> A;
+
+    int SIZE() {
+        return A.size();
+    }
+
+    int PARENT_INDEX(int i) {
+        if (i == 0) {
+            // root node
+            return 0;
+        } else {
+            return (i - 1) / 2;
+        }
+    }
+
+    int LEFT_CHILD(int i) {
+        return (2*i + 1);
+    };
+
+    int RIGHT_CHILD(int i) {
+        return (2*i + 2);
+    };
+
+    void SWAP(uint64_t* i, uint64_t* j) {
+        int temp = *i;
+        *i = *j;
+        *j = temp;
+    }
+
+    void BUBBLE_UP(int i) {
+        int p = PARENT_INDEX(i);
+
+        // violation of max-heap property
+        if (A[p] < A[i]) {
+            // printf("I entered the if\n");
+            SWAP(&A[i], &A[p]);
+            BUBBLE_UP(p);
+        }
+    }
+
+    void HEAPIFY(int i) {
+        int l = LEFT_CHILD(i);
+        int r = RIGHT_CHILD(i);
+
+        int largest = i;
+
+        if (l < SIZE() && A[l] > A[i]) {
+            largest = l;
+        }
+        if (r < SIZE() && A[r] > A[largest]) {
+            largest = r;
+        }
+
+        if (largest != i) {
+            swap(A[i], A[largest]);
+            HEAPIFY(largest);
+        }
+    }
+
+    uint64_t DELETE_MAX() {
+        if (A.size() == 0) {
+            printf("Error: heap is empty, cannot delete_max");
+            return -1;
+        }
+
+        uint64_t maxElt = A[0];
+
+        A[0] = A.back();
+        A.pop_back();
+        HEAPIFY(0);
+
+        return maxElt;
+    };
+
+    void INSERT(uint64_t elt) {
+        A.push_back(elt);
+
+        int newEltIndex = SIZE() - 1;
+        BUBBLE_UP(newEltIndex);
+    };
+
+    void PRINT() {
+        printf("\n");
+        for (int i = 0; i < SIZE(); i++) {
+            printf("%llu ", A[i]);
+        }
+        printf("\n");
+    }
+};
+
+
+
 random_device rd;
 mt19937 gen(rd());
 
@@ -164,28 +258,45 @@ int main(int argc, char *argv[]) {
 
 // Karmarkar-Karp Algorithm --> returns just difference
 uint64_t kk(vector<uint64_t> seq){
-    make_heap(seq.begin(), seq.end());
+    // Make heap
+    int n = seq.size();
+    MaxHeap seqHeap;
+    
+    for (int i = 0; i < n; i++) {
+        seqHeap.INSERT(seq[i]);
+    }
+
+    // printf("\n");
+    // for (int i = 0; i < n; i++) {
+    //     uint64_t next = seqHeap.DELETE_MAX();
+    //     printf("%llu ", next);
+    // }
+    // printf("donezo\n");
+
+    // make_heap(seq.begin(), seq.end());
 
     uint64_t largest = (uint64_t) 0;
     uint64_t nextLargest = (uint64_t) 0;
     do {
-        uint64_t largest = seq.front();
-        pop_heap (seq.begin(),seq.end());  // puts the largest element at the end of the vector
-        seq.pop_back();  // removes the last element of the vector (what we just popped from the heap)
-        uint64_t nextLargest = seq.front();
-        pop_heap (seq.begin(),seq.end());  // puts the largest element at the end of the vector
-        seq.pop_back();  // removes the last element of the vector (what we just popped from the heap)
+        // uint64_t largest = seq.front();
+        // pop_heap (seq.begin(),seq.end());  // puts the largest element at the end of the vector
+        // seq.pop_back();  // removes the last element of the vector (what we just popped from the heap)
+        // uint64_t nextLargest = seq.front();
+        // pop_heap (seq.begin(),seq.end());  // puts the largest element at the end of the vector
+        // seq.pop_back();  // removes the last element of the vector (what we just popped from the heap)
+
+        uint64_t largest = seqHeap.DELETE_MAX();
+        uint64_t nextLargest = seqHeap.DELETE_MAX();
 
         uint64_t difference = largest - nextLargest;
         if (difference > 0){
-            seq.push_back(difference);  // add difference to end of the vector
-            push_heap (seq.begin(), seq.end());
+            seqHeap.INSERT(difference);  // add difference to the heap
         }
 
-    } while (seq.size() > 1);
+    } while (seqHeap.SIZE() > 1);
 
-    if (seq.size() == 1){
-        return seq.front();
+    if (seqHeap.SIZE() == 1){
+        return seqHeap.DELETE_MAX();
     } else {
         return 0;
     }
