@@ -38,7 +38,7 @@ struct MaxHeap {
     };
 
     void SWAP(uint64_t* i, uint64_t* j) {
-        int temp = *i;
+        uint64_t temp = *i;
         *i = *j;
         *j = temp;
     }
@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
 
         if (alg == 0){
             //int difference = kk(sequence);
-            uint64_t differenceOld = kkOld(sequence);
+            uint64_t differenceOld = kk(sequence);
             printf("\n%llu\n", differenceOld);
         }
         else if (alg == 1) {
@@ -483,7 +483,7 @@ vector<int> generateRandomPrepartitioningMove(vector<int> prev, int n) {
 vector<uint64_t> generateRandomInstance(int n) {
     vector<uint64_t> instance;
     for (int i = 0; i < n; i++) {
-        instance.push_back((uint64_t) generateRandomInt(0, pow(10, 12)));
+        instance.push_back((uint64_t) generateRandomInt(1, pow(10, 12)));
     }
     return instance;
 }
@@ -540,7 +540,7 @@ uint64_t calcResidueSequence(vector<uint64_t> A, vector<int> seq) {
 
 // Generates random 64 bit integer between low and high inclusive
 int generateRandomInt(int low, int high) {
-    std::uniform_int_distribution<> dist(low, high);
+    std::uniform_int_distribution<unsigned long long> dist(low, high);
     return dist(gen);
 }
 
