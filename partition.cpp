@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
 
         if (alg == 0){
             //int difference = kk(sequence);
-            uint64_t differenceOld = kk(sequence);
+            uint64_t differenceOld = kkOld(sequence);
             printf("\n%llu\n", differenceOld);
         }
         else if (alg == 1) {
