@@ -38,7 +38,7 @@ struct MaxHeap {
     };
 
     void SWAP(uint64_t* i, uint64_t* j) {
-        int temp = *i;
+        uint64_t temp = *i;
         *i = *j;
         *j = temp;
     }
@@ -180,38 +180,38 @@ int main(int argc, char *argv[]) {
         // }
 
         if (alg == 0){
-            int difference = kk(sequence);
-            printf("\n%i\n", difference);
+            uint64_t difference = kk(sequence);
+            printf("\n%llu\n", difference);
         }
         else if (alg == 1) {
             vector<int> startS = generateRandomSequenceSoln(n);
-            int residue = repeatedRandom(sequence, startS, n, true);
-            printf("\n %i\n", residue);
+            uint64_t residue = repeatedRandom(sequence, startS, n, true);
+            printf("\n %llu\n", residue);
         }
         else if (alg == 2) {
             vector<int> startS = generateRandomSequenceSoln(n);
-            int residue = hillClimbing(sequence, startS, n, true);
-            printf("\n %i\n", residue);
+            uint64_t residue = hillClimbing(sequence, startS, n, true);
+            printf("\n %llu\n", residue);
         }
         else if (alg == 3) {
             vector<int> startS = generateRandomSequenceSoln(n);
-            int residue = simulatedAnnealing(sequence, startS, n, true);
-            printf("\n %i\n", residue);
+            uint64_t residue = simulatedAnnealing(sequence, startS, n, true);
+            printf("\n %llu\n", residue);
         }
         else if (alg == 11) {
             vector<int> startS = generateRandomPrepartitioningSoln(n);
-            int residue = repeatedRandom(sequence, startS, n, false);
-            printf("\n %i\n", residue);
+            uint64_t residue = repeatedRandom(sequence, startS, n, false);
+            printf("\n %llu\n", residue);
         }
         else if (alg == 12) {
             vector<int> startS = generateRandomPrepartitioningSoln(n);
-            int residue = hillClimbing(sequence, startS, n, false);
-            printf("\n %i\n", residue);
+            uint64_t residue = hillClimbing(sequence, startS, n, false);
+            printf("\n %llu\n", residue);
         }
         else if (alg == 13) {
             vector<int> startS = generateRandomPrepartitioningSoln(n);
-            int residue = simulatedAnnealing(sequence, startS, n, false);
-            printf("\n %i\n", residue);
+            uint64_t residue = simulatedAnnealing(sequence, startS, n, false);
+            printf("\n %llu\n", residue);
         }
 
     }
@@ -221,9 +221,9 @@ int main(int argc, char *argv[]) {
             sequence = generateRandomInstance(100);
             int n = sequence.size();
 
-            for (int i = 0; i < n; i++) {
-                printf("%llu\n", sequence[i]);
-            }
+            // for (int i = 0; i < n; i++) {
+            //     printf("%llu\n", sequence[i]);
+            // }
 
             uint64_t kkResidue = kk(sequence);
             printf("kk residue: %llu\n", kkResidue);
@@ -266,25 +266,9 @@ uint64_t kk(vector<uint64_t> seq){
         seqHeap.INSERT(seq[i]);
     }
 
-    // printf("\n");
-    // for (int i = 0; i < n; i++) {
-    //     uint64_t next = seqHeap.DELETE_MAX();
-    //     printf("%llu ", next);
-    // }
-    // printf("donezo\n");
-
-    // make_heap(seq.begin(), seq.end());
-
     uint64_t largest = (uint64_t) 0;
     uint64_t nextLargest = (uint64_t) 0;
     do {
-        // uint64_t largest = seq.front();
-        // pop_heap (seq.begin(),seq.end());  // puts the largest element at the end of the vector
-        // seq.pop_back();  // removes the last element of the vector (what we just popped from the heap)
-        // uint64_t nextLargest = seq.front();
-        // pop_heap (seq.begin(),seq.end());  // puts the largest element at the end of the vector
-        // seq.pop_back();  // removes the last element of the vector (what we just popped from the heap)
-
         uint64_t largest = seqHeap.DELETE_MAX();
         uint64_t nextLargest = seqHeap.DELETE_MAX();
 
@@ -516,7 +500,7 @@ uint64_t calcResidueSequence(vector<uint64_t> A, vector<int> seq) {
 
 // Generates random 64 bit integer between low and high inclusive
 int generateRandomInt(int low, int high) {
-    std::uniform_int_distribution<> dist(low, high);
+    std::uniform_int_distribution<unsigned long long> dist(low, high);
     return dist(gen);
 }
 
