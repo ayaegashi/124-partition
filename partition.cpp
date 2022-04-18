@@ -187,33 +187,33 @@ int main(int argc, char *argv[]) {
         }
         else if (alg == 1) {
             vector<int> startS = generateRandomSequenceSoln(n);
-            int residue = repeatedRandom(sequence, startS, n, true);
-            printf("\n %i\n", residue);
+            uint64_t residue = repeatedRandom(sequence, startS, n, true);
+            printf("\n %llu\n", residue);
         }
         else if (alg == 2) {
             vector<int> startS = generateRandomSequenceSoln(n);
-            int residue = hillClimbing(sequence, startS, n, true);
-            printf("\n %i\n", residue);
+            uint64_t residue = hillClimbing(sequence, startS, n, true);
+            printf("\n %llu\n", residue);
         }
         else if (alg == 3) {
             vector<int> startS = generateRandomSequenceSoln(n);
-            int residue = simulatedAnnealing(sequence, startS, n, true);
-            printf("\n %i\n", residue);
+            uint64_t residue = simulatedAnnealing(sequence, startS, n, true);
+            printf("\n %llu\n", residue);
         }
         else if (alg == 11) {
             vector<int> startS = generateRandomPrepartitioningSoln(n);
-            int residue = repeatedRandom(sequence, startS, n, false);
-            printf("\n %i\n", residue);
+            uint64_t residue = repeatedRandom(sequence, startS, n, false);
+            printf("\n %llu\n", residue);
         }
         else if (alg == 12) {
             vector<int> startS = generateRandomPrepartitioningSoln(n);
-            int residue = hillClimbing(sequence, startS, n, false);
-            printf("\n %i\n", residue);
+            uint64_t residue = hillClimbing(sequence, startS, n, false);
+            printf("\n %llu\n", residue);
         }
         else if (alg == 13) {
             vector<int> startS = generateRandomPrepartitioningSoln(n);
-            int residue = simulatedAnnealing(sequence, startS, n, false);
-            printf("\n %i\n", residue);
+            uint64_t residue = simulatedAnnealing(sequence, startS, n, false);
+            printf("\n %llu\n", residue);
         }
 
     }
