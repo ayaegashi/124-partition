@@ -130,10 +130,7 @@ vector<int> generateRandomSequenceMove(vector<int> prevSeq);
 
 // Generating Instances
 vector<uint64_t> generateRandomInstance(int n);
-int generateRandomInt(int low, int high);
-
-
-// I'm also not sure if I implemented 64 bit ints correctly lol... HOPEFULLY!!! lmao
+uint64_t generateRandomInt(uint64_t low, uint64_t high);
 
 int main(int argc, char *argv[]) {
 
@@ -232,6 +229,9 @@ int main(int argc, char *argv[]) {
             vector<int> startPrepartSol = generateRandomPrepartitioningSoln(n);
 
             // Sequencing 
+            uint64_t startRandomSeqResidue = calcResidueSequence(sequence, startSequenceSol);
+            printf("SEQUENCE start random residue: %llu\n", startRandomSeqResidue);
+
             uint64_t repeatedRandomSeqResidue = repeatedRandom(sequence, startSequenceSol, n, true);
             printf("SEQUENCE repeated random residue: %llu\n", repeatedRandomSeqResidue);
 
@@ -242,6 +242,9 @@ int main(int argc, char *argv[]) {
             printf("SEQUENCE simulated annealing residue: %llu\n", simulatedAnealingSeqResidue);
 
             // Prepartitioning
+            uint64_t startPrepartResidue = calcResiduePrepartitioning(sequence, startPrepartSol);
+            printf("PREPARTITION start random residue: %llu\n", startPrepartResidue);
+
             uint64_t repeatedRandomPrepartResidue = repeatedRandom(sequence, startPrepartSol, n, false);
             printf("PREPARTITION repeated random residue: %llu\n", repeatedRandomPrepartResidue);
 
@@ -414,14 +417,25 @@ uint64_t calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S) {
     // Initialize A_prime
     vector<uint64_t> A_prime;
     for (int i = 0; i < n; i++) {
-        A_prime.push_back(0);
+        A_prime.push_back((uint64_t) 0);
     }
 
+    // printf("PRIOR A\n");
+    // for (int i = 0; i < n; i++) {
+    //     printf("%llu\n", A[i]);
+    // }
+
+    // printf("FROM S\n");
     // Generate A_i from prepartioning S
     for (int i = 0; i < n; i++) {
         int new_idx = S.at(i);
-        A_prime[new_idx] += A.at(i);
+        // printf("%i\n", new_idx);
+        A_prime[new_idx-1] += A.at(i);
     }
+    // printf("RESULT A\n");
+    // for (int i = 0; i < n; i++) {
+    //     printf("%llu\n", A_prime[i]);
+    // }
 
     // Calculate Residue with KK
     return kk(A_prime);
@@ -430,10 +444,10 @@ uint64_t calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S) {
 // Takes previous solution and randomly generates next solution to explore out of neighbor state space
 vector<int> generateRandomPrepartitioningMove(vector<int> prev, int n) {
     int i = generateRandomInt(0, n-1);
-    int j = generateRandomInt(0, n-1);
+    int j = generateRandomInt(1, n);
     while (prev.at(i) == j) {
         i = generateRandomInt(0, n-1);
-        j = generateRandomInt(0, n-1);
+        j = generateRandomInt(1, n);
     }
     prev[i] = j;
     return prev;
@@ -443,7 +457,7 @@ vector<int> generateRandomPrepartitioningMove(vector<int> prev, int n) {
 vector<uint64_t> generateRandomInstance(int n) {
     vector<uint64_t> instance;
     for (int i = 0; i < n; i++) {
-        instance.push_back((uint64_t) generateRandomInt(1, pow(10, 12)));
+        instance.push_back(generateRandomInt(1, pow(10, 12)));
     }
     return instance;
 }
@@ -499,8 +513,8 @@ uint64_t calcResidueSequence(vector<uint64_t> A, vector<int> seq) {
 }
 
 // Generates random 64 bit integer between low and high inclusive
-int generateRandomInt(int low, int high) {
-    std::uniform_int_distribution<unsigned long long> dist(low, high);
-    return dist(gen);
+uint64_t generateRandomInt(uint64_t low, uint64_t high) {
+    std::uniform_int_distribution<uint64_t> distr(low, high);
+    return distr(gen);
 }
 
