@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
 
         if (alg == 0){
             //int difference = kk(sequence);
-            int differenceOld = kkOld(sequence);
+            int differenceOld = kk(sequence);
             printf("\n%i\n", differenceOld);
         }
         else if (alg == 1) {
@@ -219,13 +219,14 @@ int main(int argc, char *argv[]) {
     }
     // Generate x random instances from function
     else if (flag == 1) {
-        for (int i = 0; i < 1; i++) {
+        int count = 0;
+        for (int i = 0; i < 10000; i++) {
             sequence = generateRandomInstance(100);
             int n = sequence.size();
 
-            for (int i = 0; i < n; i++) {
-                printf("%llu\n", sequence[i]);
-            }
+            // for (int i = 0; i < n; i++) {
+            //     printf("%llu\n", sequence[i]);
+            // }
 
             uint64_t kkResidue = kk(sequence);
             printf("kk residue: %llu\n", kkResidue);
@@ -233,29 +234,34 @@ int main(int argc, char *argv[]) {
             uint64_t kkOldResidue = kkOld(sequence);
             printf("kkOld residue: %llu\n", kkOldResidue);
 
+            if (kkResidue != kkOldResidue) {
+                count += 1;
+            }
+
             vector<int> startSequenceSol = generateRandomSequenceSoln(n);
             vector<int> startPrepartSol = generateRandomPrepartitioningSoln(n);
 
             // Sequencing 
-            uint64_t repeatedRandomSeqResidue = repeatedRandom(sequence, startSequenceSol, n, true);
-            printf("SEQUENCE repeated random residue: %llu\n", repeatedRandomSeqResidue);
+            // uint64_t repeatedRandomSeqResidue = repeatedRandom(sequence, startSequenceSol, n, true);
+            // printf("SEQUENCE repeated random residue: %llu\n", repeatedRandomSeqResidue);
 
-            uint64_t hillClimbingSeqResidue = hillClimbing(sequence, startSequenceSol, n, true);
-            printf("SEQUENCE hill climbing residue: %llu\n", hillClimbingSeqResidue);
+            // uint64_t hillClimbingSeqResidue = hillClimbing(sequence, startSequenceSol, n, true);
+            // printf("SEQUENCE hill climbing residue: %llu\n", hillClimbingSeqResidue);
 
-            uint64_t simulatedAnealingSeqResidue = simulatedAnnealing(sequence, startSequenceSol, n, true);
-            printf("SEQUENCE simulated annealing residue: %llu\n", simulatedAnealingSeqResidue);
+            // uint64_t simulatedAnealingSeqResidue = simulatedAnnealing(sequence, startSequenceSol, n, true);
+            // printf("SEQUENCE simulated annealing residue: %llu\n", simulatedAnealingSeqResidue);
 
-            // Prepartitioning
-            uint64_t repeatedRandomPrepartResidue = repeatedRandom(sequence, startPrepartSol, n, false);
-            printf("PREPARTITION repeated random residue: %llu\n", repeatedRandomPrepartResidue);
+            // // Prepartitioning
+            // uint64_t repeatedRandomPrepartResidue = repeatedRandom(sequence, startPrepartSol, n, false);
+            // printf("PREPARTITION repeated random residue: %llu\n", repeatedRandomPrepartResidue);
 
-            uint64_t hillClimbingPrepartResidue = hillClimbing(sequence, startPrepartSol, n, false);
-            printf("PREPARTITION hill climbing residue: %llu\n", hillClimbingPrepartResidue);
+            // uint64_t hillClimbingPrepartResidue = hillClimbing(sequence, startPrepartSol, n, false);
+            // printf("PREPARTITION hill climbing residue: %llu\n", hillClimbingPrepartResidue);
 
-            uint64_t simulatedAnealingPrepartResidue = simulatedAnnealing(sequence, startPrepartSol, n, false);
-            printf("PREPARTITION simulated annealing residue: %llu\n", simulatedAnealingPrepartResidue);
+            // uint64_t simulatedAnealingPrepartResidue = simulatedAnnealing(sequence, startPrepartSol, n, false);
+            // printf("PREPARTITION simulated annealing residue: %llu\n", simulatedAnealingPrepartResidue);
         }
+        printf("mismatches: %i\n", count);
     }
 
     return 0;
@@ -287,6 +293,7 @@ uint64_t kk(vector<uint64_t> seq){
     if (seqHeap.SIZE() == 1){
         return seqHeap.DELETE_MAX();
     } else {
+        printf("ended here, because the size of the heap is %i\n", seqHeap.SIZE());
         return 0;
     }
 
