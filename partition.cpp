@@ -182,8 +182,8 @@ int main(int argc, char *argv[]) {
 
         if (alg == 0){
             //int difference = kk(sequence);
-            int differenceOld = kk(sequence);
-            printf("\n%i\n", differenceOld);
+            uint64_t differenceOld = kk(sequence);
+            printf("\n%llu\n", differenceOld);
         }
         else if (alg == 1) {
             vector<int> startS = generateRandomSequenceSoln(n);
@@ -483,7 +483,7 @@ vector<int> generateRandomPrepartitioningMove(vector<int> prev, int n) {
 vector<uint64_t> generateRandomInstance(int n) {
     vector<uint64_t> instance;
     for (int i = 0; i < n; i++) {
-        instance.push_back((uint64_t) generateRandomInt(1, pow(10, 12)));
+        instance.push_back((uint64_t) generateRandomInt(0, pow(10, 12)));
     }
     return instance;
 }
