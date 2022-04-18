@@ -113,6 +113,7 @@ const int MAX_ITER = 25000;
 
 // Algorithms
 uint64_t kk(vector<uint64_t> seq);
+uint64_t kkOld(vector<uint64_t> seq);
 uint64_t repeatedRandom(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
 uint64_t hillClimbing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
 uint64_t simulatedAnnealing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
@@ -180,8 +181,9 @@ int main(int argc, char *argv[]) {
         // }
 
         if (alg == 0){
-            int difference = kk(sequence);
-            printf("\n%i\n", difference);
+            //int difference = kk(sequence);
+            int differenceOld = kkOld(sequence);
+            printf("\n%i\n", differenceOld);
         }
         else if (alg == 1) {
             vector<int> startS = generateRandomSequenceSoln(n);
@@ -228,6 +230,9 @@ int main(int argc, char *argv[]) {
             uint64_t kkResidue = kk(sequence);
             printf("kk residue: %llu\n", kkResidue);
 
+            uint64_t kkOldResidue = kkOld(sequence);
+            printf("kkOld residue: %llu\n", kkOldResidue);
+
             vector<int> startSequenceSol = generateRandomSequenceSoln(n);
             vector<int> startPrepartSol = generateRandomPrepartitioningSoln(n);
 
@@ -266,25 +271,9 @@ uint64_t kk(vector<uint64_t> seq){
         seqHeap.INSERT(seq[i]);
     }
 
-    // printf("\n");
-    // for (int i = 0; i < n; i++) {
-    //     uint64_t next = seqHeap.DELETE_MAX();
-    //     printf("%llu ", next);
-    // }
-    // printf("donezo\n");
-
-    // make_heap(seq.begin(), seq.end());
-
     uint64_t largest = (uint64_t) 0;
     uint64_t nextLargest = (uint64_t) 0;
     do {
-        // uint64_t largest = seq.front();
-        // pop_heap (seq.begin(),seq.end());  // puts the largest element at the end of the vector
-        // seq.pop_back();  // removes the last element of the vector (what we just popped from the heap)
-        // uint64_t nextLargest = seq.front();
-        // pop_heap (seq.begin(),seq.end());  // puts the largest element at the end of the vector
-        // seq.pop_back();  // removes the last element of the vector (what we just popped from the heap)
-
         uint64_t largest = seqHeap.DELETE_MAX();
         uint64_t nextLargest = seqHeap.DELETE_MAX();
 
@@ -301,6 +290,34 @@ uint64_t kk(vector<uint64_t> seq){
         return 0;
     }
 
+    // This doesn't actually do anything. Just was getting an annoying compiler warning without this.
+    largest += 1;
+    nextLargest += 1;
+};
+
+// Karmarkar-Karp Algorithm OLD VERSION --> returns just difference
+uint64_t kkOld(vector<uint64_t> seq){
+    make_heap(seq.begin(), seq.end());
+    uint64_t largest = (uint64_t) 0;
+    uint64_t nextLargest = (uint64_t) 0;
+    do {
+        uint64_t largest = seq.front();
+        pop_heap (seq.begin(),seq.end());  // puts the largest element at the end of the vector
+        seq.pop_back();  // removes the last element of the vector (what we just popped from the heap)
+        uint64_t nextLargest = seq.front();
+        pop_heap (seq.begin(),seq.end());  // puts the largest element at the end of the vector
+        seq.pop_back();  // removes the last element of the vector (what we just popped from the heap)
+        uint64_t difference = largest - nextLargest;
+        if (difference > 0){
+            seq.push_back(difference);  // add difference to end of the vector
+            push_heap (seq.begin(), seq.end());
+        }
+    } while (seq.size() > 1);
+    if (seq.size() == 1){
+        return seq.front();
+    } else {
+        return 0;
+    }
     // This doesn't actually do anything. Just was getting an annoying compiler warning without this.
     largest += 1;
     nextLargest += 1;
