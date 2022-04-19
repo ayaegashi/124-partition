@@ -172,10 +172,6 @@ int main(int argc, char *argv[]) {
 
         int n = sequence.size();
 
-        // for (int i = 0; i < n; i ++) {
-        //     printf("%llu ", sequence[i]);
-        // }
-
         if (alg == 0){
             uint64_t difference = kk(sequence);
             printf("\n%llu\n", difference);
@@ -353,6 +349,7 @@ uint64_t hillClimbing(vector<uint64_t> A, vector<int> startS, int n, bool isSequ
     }
 }
 
+// Returns best residue from simulated annealing algorithm
 uint64_t simulatedAnnealing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence) {
     if (isSequence) {
         vector<int> currSoln = startS;
@@ -397,6 +394,7 @@ uint64_t simulatedAnnealing(vector<uint64_t> A, vector<int> startS, int n, bool 
     }
 }
 
+// Cooling function for simulated annealing
 int T(int i) {
     int iter = floor(i/300);
     return pow(10, 10) * pow(0.8, iter);
@@ -420,22 +418,12 @@ uint64_t calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S) {
         A_prime.push_back((uint64_t) 0);
     }
 
-    // printf("PRIOR A\n");
-    // for (int i = 0; i < n; i++) {
-    //     printf("%llu\n", A[i]);
-    // }
-
-    // printf("FROM S\n");
     // Generate A_i from prepartioning S
     for (int i = 0; i < n; i++) {
         int new_idx = S.at(i);
         // printf("%i\n", new_idx);
         A_prime[new_idx-1] += A.at(i);
     }
-    // printf("RESULT A\n");
-    // for (int i = 0; i < n; i++) {
-    //     printf("%llu\n", A_prime[i]);
-    // }
 
     // Calculate Residue with KK
     return kk(A_prime);
