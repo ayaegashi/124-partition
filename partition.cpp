@@ -116,7 +116,7 @@ uint64_t kk(vector<uint64_t> seq);
 uint64_t repeatedRandom(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
 uint64_t hillClimbing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
 uint64_t simulatedAnnealing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
-int T(int i);
+double T(int i);
 
 // For Prepartitioning
 uint64_t calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S);
@@ -395,7 +395,7 @@ uint64_t simulatedAnnealing(vector<uint64_t> A, vector<int> startS, int n, bool 
 }
 
 // Cooling function for simulated annealing
-int T(int i) {
+double T(int i) {
     int iter = floor(i/300);
     return pow(10, 10) * pow(0.8, iter);
 }
