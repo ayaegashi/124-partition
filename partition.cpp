@@ -37,10 +37,10 @@ struct MaxHeap {
         return (2*i + 2);
     };
 
-    void SWAP(uint64_t* i, uint64_t* j) {
-        uint64_t temp = *i;
-        *i = *j;
-        *j = temp;
+    void SWAP(uint64_t& i, uint64_t& j) {
+        uint64_t temp = i;
+        i = j;
+        j = temp;
     }
 
     void BUBBLE_UP(int i) {
@@ -48,8 +48,7 @@ struct MaxHeap {
 
         // violation of max-heap property
         if (A[p] < A[i]) {
-            // printf("I entered the if\n");
-            SWAP(&A[i], &A[p]);
+            SWAP(A[i], A[p]);
             BUBBLE_UP(p);
         }
     }
@@ -116,7 +115,7 @@ uint64_t kk(vector<uint64_t> seq);
 uint64_t repeatedRandom(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
 uint64_t hillClimbing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
 uint64_t simulatedAnnealing(vector<uint64_t> A, vector<int> startS, int n, bool isSequence);
-int T(int i);
+float T(int i);
 
 // For Prepartitioning
 uint64_t calcResiduePrepartitioning(vector<uint64_t> A, vector<int> S);
@@ -210,7 +209,13 @@ int main(int argc, char *argv[]) {
     }
     // Generate x random instances from function
     else if (flag == 1) {
-        for (int i = 0; i < 1; i++) {
+        // Open output file
+        ofstream myfile;
+        myfile.open("data 3.txt", ofstream::app);
+        myfile << "trial, Karmarkar-Karp, SEQ Start Random Residue, SEQ Repeated Random, SEQ Hill Climbing, SEQ Sim. Annealing, PP Start Random, PP Repeated Random, PP Hill Climbing, PP Sim. Annealing" << endl;
+
+        for (int i = 0; i < 50; i++) {
+            myfile << i << ", ";
             sequence = generateRandomInstance(100);
             int n = sequence.size();
 
@@ -220,6 +225,7 @@ int main(int argc, char *argv[]) {
 
             uint64_t kkResidue = kk(sequence);
             printf("kk residue: %llu\n", kkResidue);
+            myfile << kkResidue << ", ";
 
             vector<int> startSequenceSol = generateRandomSequenceSoln(n);
             vector<int> startPrepartSol = generateRandomPrepartitioningSoln(n);
@@ -227,29 +233,38 @@ int main(int argc, char *argv[]) {
             // Sequencing 
             uint64_t startRandomSeqResidue = calcResidueSequence(sequence, startSequenceSol);
             printf("SEQUENCE start random residue: %llu\n", startRandomSeqResidue);
+            myfile << startRandomSeqResidue << ", ";
 
             uint64_t repeatedRandomSeqResidue = repeatedRandom(sequence, startSequenceSol, n, true);
             printf("SEQUENCE repeated random residue: %llu\n", repeatedRandomSeqResidue);
+            myfile << repeatedRandomSeqResidue << ", ";
 
             uint64_t hillClimbingSeqResidue = hillClimbing(sequence, startSequenceSol, n, true);
             printf("SEQUENCE hill climbing residue: %llu\n", hillClimbingSeqResidue);
+            myfile << hillClimbingSeqResidue << ", ";
 
             uint64_t simulatedAnealingSeqResidue = simulatedAnnealing(sequence, startSequenceSol, n, true);
             printf("SEQUENCE simulated annealing residue: %llu\n", simulatedAnealingSeqResidue);
+            myfile << simulatedAnealingSeqResidue << ", ";
 
             // Prepartitioning
             uint64_t startPrepartResidue = calcResiduePrepartitioning(sequence, startPrepartSol);
             printf("PREPARTITION start random residue: %llu\n", startPrepartResidue);
+            myfile << startPrepartResidue << ", ";
 
             uint64_t repeatedRandomPrepartResidue = repeatedRandom(sequence, startPrepartSol, n, false);
             printf("PREPARTITION repeated random residue: %llu\n", repeatedRandomPrepartResidue);
+            myfile << repeatedRandomPrepartResidue << ", ";
 
             uint64_t hillClimbingPrepartResidue = hillClimbing(sequence, startPrepartSol, n, false);
             printf("PREPARTITION hill climbing residue: %llu\n", hillClimbingPrepartResidue);
+            myfile << hillClimbingPrepartResidue << ", ";
 
             uint64_t simulatedAnealingPrepartResidue = simulatedAnnealing(sequence, startPrepartSol, n, false);
             printf("PREPARTITION simulated annealing residue: %llu\n", simulatedAnealingPrepartResidue);
+            myfile << simulatedAnealingPrepartResidue << endl;
         }
+        myfile.close();
     }
 
     return 0;
@@ -395,7 +410,7 @@ uint64_t simulatedAnnealing(vector<uint64_t> A, vector<int> startS, int n, bool 
 }
 
 // Cooling function for simulated annealing
-int T(int i) {
+float T(int i) {
     int iter = floor(i/300);
     return pow(10, 10) * pow(0.8, iter);
 }
