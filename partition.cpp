@@ -9,6 +9,7 @@
 #include <tuple>
 #include <algorithm>
 #include <random>
+#include <chrono>
 
 using namespace std;
 
@@ -209,21 +210,24 @@ int main(int argc, char *argv[]) {
     }
     // Generate x random instances from function
     else if (flag == 1) {
+        using std::chrono::high_resolution_clock;
+        using std::chrono::duration;
+        using std::chrono::milliseconds;
         // Open output file
         ofstream myfile;
         myfile.open("data 3.txt", ofstream::app);
-        myfile << "trial, Karmarkar-Karp, SEQ Start Random Residue, SEQ Repeated Random, SEQ Hill Climbing, SEQ Sim. Annealing, PP Start Random, PP Repeated Random, PP Hill Climbing, PP Sim. Annealing" << endl;
+        myfile << "trial, Karmarkar-Karp, SEQ Start Random Residue, SEQ Repeated Random, SEQ Hill Climbing, SEQ Sim. Annealing, PP Start Random, PP Repeated Random, PP Hill Climbing, PP Sim. Annealing, KK Time, SRR Time, SHC Time, SSA Time, PRR Time, PHC Time, PSA Time" << endl;
 
         for (int i = 0; i < 50; i++) {
             myfile << i << ", ";
             sequence = generateRandomInstance(100);
             int n = sequence.size();
 
-            // for (int i = 0; i < n; i++) {
-            //     printf("%llu\n", sequence[i]);
-            // }
-
+            std::chrono::high_resolution_clock::time_point start = high_resolution_clock::now();
             uint64_t kkResidue = kk(sequence);
+            std::chrono::high_resolution_clock::time_point end = high_resolution_clock::now();
+
+            duration<double, milli> kkTime = end - start;
             printf("kk residue: %llu\n", kkResidue);
             myfile << kkResidue << ", ";
 
@@ -231,38 +235,82 @@ int main(int argc, char *argv[]) {
             vector<int> startPrepartSol = generateRandomPrepartitioningSoln(n);
 
             // Sequencing 
+
+            // Start Random
             uint64_t startRandomSeqResidue = calcResidueSequence(sequence, startSequenceSol);
             printf("SEQUENCE start random residue: %llu\n", startRandomSeqResidue);
             myfile << startRandomSeqResidue << ", ";
 
+            // RR
+            start = high_resolution_clock::now();
             uint64_t repeatedRandomSeqResidue = repeatedRandom(sequence, startSequenceSol, n, true);
+            end = high_resolution_clock::now();
+
+            duration<double, milli> SRRTime = end - start;
             printf("SEQUENCE repeated random residue: %llu\n", repeatedRandomSeqResidue);
             myfile << repeatedRandomSeqResidue << ", ";
 
+            // HC
+            start = high_resolution_clock::now();
             uint64_t hillClimbingSeqResidue = hillClimbing(sequence, startSequenceSol, n, true);
+            end = high_resolution_clock::now();
+
+            duration<double, milli> SHCTime = end - start;
             printf("SEQUENCE hill climbing residue: %llu\n", hillClimbingSeqResidue);
             myfile << hillClimbingSeqResidue << ", ";
 
+            // SA
+            start = high_resolution_clock::now();
             uint64_t simulatedAnealingSeqResidue = simulatedAnnealing(sequence, startSequenceSol, n, true);
+            end = high_resolution_clock::now();
+
+            duration<double, milli> SSATime = end - start;
             printf("SEQUENCE simulated annealing residue: %llu\n", simulatedAnealingSeqResidue);
             myfile << simulatedAnealingSeqResidue << ", ";
 
             // Prepartitioning
+
+            // Start Random
             uint64_t startPrepartResidue = calcResiduePrepartitioning(sequence, startPrepartSol);
             printf("PREPARTITION start random residue: %llu\n", startPrepartResidue);
             myfile << startPrepartResidue << ", ";
 
+            // RR
+            start = high_resolution_clock::now();
             uint64_t repeatedRandomPrepartResidue = repeatedRandom(sequence, startPrepartSol, n, false);
+            end = high_resolution_clock::now();
+
+            duration<double, milli> PRRTime = end - start;
             printf("PREPARTITION repeated random residue: %llu\n", repeatedRandomPrepartResidue);
             myfile << repeatedRandomPrepartResidue << ", ";
 
+            // HC
+            start = high_resolution_clock::now();
             uint64_t hillClimbingPrepartResidue = hillClimbing(sequence, startPrepartSol, n, false);
+            end = high_resolution_clock::now();
+
+            duration<double, milli> PHCTime = end - start;
             printf("PREPARTITION hill climbing residue: %llu\n", hillClimbingPrepartResidue);
             myfile << hillClimbingPrepartResidue << ", ";
 
+            // SA
+            start = high_resolution_clock::now();
             uint64_t simulatedAnealingPrepartResidue = simulatedAnnealing(sequence, startPrepartSol, n, false);
+            end = high_resolution_clock::now();
+
+            duration<double, milli> PSATime = end - start;
             printf("PREPARTITION simulated annealing residue: %llu\n", simulatedAnealingPrepartResidue);
-            myfile << simulatedAnealingPrepartResidue << endl;
+            myfile << simulatedAnealingPrepartResidue << ", ";
+
+            // Printing Runtimes
+            myfile << kkTime.count() << ",  ";
+            myfile << SRRTime.count() << ",  ";
+            myfile << SHCTime.count() << ",  ";
+            myfile << SSATime.count() << ",  ";
+            myfile << PRRTime.count() << ",  ";
+            myfile << PHCTime.count() << ",  ";
+            myfile << PSATime.count() << endl;
+        
         }
         myfile.close();
     }
